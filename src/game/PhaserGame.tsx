@@ -1,6 +1,7 @@
 import { SpinePlugin } from '@esotericsoftware/spine-phaser-v4'
 import Phaser from 'phaser'
 import { useEffect, useRef } from 'react'
+import { IS_POKI } from './platform'
 import { GAME_HEIGHT, GAME_WIDTH } from './constants'
 import { MainScene } from './scenes/MainScene'
 
@@ -51,7 +52,7 @@ export function PhaserGame({ onReady }: PhaserGameProps) {
         },
       },
       scale: {
-        mode: Phaser.Scale.FIT,
+        mode: IS_POKI ? Phaser.Scale.RESIZE : Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
       },
       plugins: {

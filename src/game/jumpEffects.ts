@@ -1,3 +1,4 @@
+import { safeStorage } from './safeStorage'
 import { ACHIEVEMENTS } from './achievements'
 
 const EFFECT_KEY = 'pandajump.jumpEffect'
@@ -21,10 +22,10 @@ export function isJumpEffectUnlocked(effect: JumpEffect) {
 }
 
 export function getEquippedJumpEffect(): JumpEffect {
-  const savedId = localStorage.getItem(EFFECT_KEY)
+  const savedId = safeStorage.getItem(EFFECT_KEY)
   return JUMP_EFFECTS.find((effect) => effect.id === savedId && isJumpEffectUnlocked(effect)) ?? JUMP_EFFECTS[0]
 }
 
 export function equipJumpEffect(effect: JumpEffect) {
-  if (isJumpEffectUnlocked(effect)) localStorage.setItem(EFFECT_KEY, effect.id)
+  if (isJumpEffectUnlocked(effect)) safeStorage.setItem(EFFECT_KEY, effect.id)
 }

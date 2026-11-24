@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:poki": "vite --mode poki",
+    "build:poki": "tsc -b && vite build --mode poki",
+    "preview:poki": "vite preview --outDir dist-poki",
+    "test:poki": "node --test tests/poki.test.mjs"
   },
   "dependencies": {
     "@esotericsoftware/spine-phaser-v4": "^4.3.13",

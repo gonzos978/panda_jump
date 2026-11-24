@@ -1,29 +1,12 @@
-import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp } from 'firebase/firestore'
-import { db, ensureAuth } from './firebase'
-
-export interface GlobalLeaderboardEntry {
-  name: string
-  score: number
-}
-
-const LEADERBOARD_COLLECTION = 'leaderboard'
-const MAX_NAME_LENGTH = 16
-
+import { IS_POKI } from './platform'
+export interface GlobalLeaderboardEntry { name: string; score: number }
 export async function submitScore(name: string, score: number) {
-  await ensureAuth()
-  await addDoc(collection(db, LEADERBOARD_COLLECTION), {
-    name: name.slice(0, MAX_NAME_LENGTH),
-    score,
-    createdAt: serverTimestamp(),
-  })
+  if (IS_POKI) return
+  const firebase = await import('./firebaseLeaderboard')
+  return firebase.submitScore(name, score)
 }
-
 export async function fetchTopScores(max = 10): Promise<GlobalLeaderboardEntry[]> {
-  await ensureAuth()
-  const q = query(collection(db, LEADERBOARD_COLLECTION), orderBy('score', 'desc'), limit(max))
-  const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => {
-    const data = doc.data()
-    return { name: data.name as string, score: data.score as number }
-  })
+  if (IS_POKI) return []
+  const firebase = await import('./firebaseLeaderboard')
+  return firebase.fetchTopScores(max)
 }

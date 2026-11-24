@@ -46,7 +46,7 @@ export const UPGRADES: UpgradeDefinition[] = [
   {
     id: 'magnet',
     title: 'Magnet',
-    icon: '/assets/upgrades/magnet.png',
+    icon: `${import.meta.env.BASE_URL}assets/upgrades/magnet.png`,
     costs: MAGNET_UPGRADE_COSTS,
     getLevel: getMagnetLevel,
     setLevel: setMagnetLevel,
@@ -59,7 +59,7 @@ export const UPGRADES: UpgradeDefinition[] = [
   {
     id: 'rocket',
     title: 'Rocket',
-    icon: '/assets/upgrades/rocket.png',
+    icon: `${import.meta.env.BASE_URL}assets/upgrades/rocket.png`,
     costs: ROCKET_UPGRADE_COSTS,
     getLevel: getRocketLevel,
     setLevel: setRocketLevel,
@@ -72,7 +72,7 @@ export const UPGRADES: UpgradeDefinition[] = [
   {
     id: 'shield',
     title: 'Shield',
-    icon: '/assets/upgrades/shield.png',
+    icon: `${import.meta.env.BASE_URL}assets/upgrades/shield.png`,
     costs: SHIELD_UPGRADE_COSTS,
     getLevel: getShieldLevel,
     setLevel: setShieldLevel,
@@ -84,7 +84,7 @@ export const UPGRADES: UpgradeDefinition[] = [
   {
     id: 'wings',
     title: 'Wings',
-    icon: '/assets/upgrades/wings.png',
+    icon: `${import.meta.env.BASE_URL}assets/upgrades/wings.png`,
     costs: WINGS_UPGRADE_COSTS,
     getLevel: getWingsLevel,
     setLevel: setWingsLevel,
@@ -96,7 +96,7 @@ export const UPGRADES: UpgradeDefinition[] = [
   {
     id: 'parachute',
     title: 'Parachute',
-    icon: '/assets/upgrades/parachute.png',
+    icon: `${import.meta.env.BASE_URL}assets/upgrades/parachute.png`,
     costs: PARACHUTE_UPGRADE_COSTS,
     getLevel: getParachuteLevel,
     setLevel: setParachuteLevel,

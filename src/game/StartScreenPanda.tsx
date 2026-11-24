@@ -1,6 +1,7 @@
 import { SpinePlugin } from '@esotericsoftware/spine-phaser-v4'
 import Phaser from 'phaser'
 import { useEffect, useRef } from 'react'
+import { getMusicEnabled } from './storage'
 import { StartPandaScene } from './scenes/StartPandaScene'
 
 const WIDTH = 300
@@ -10,13 +11,18 @@ const HEIGHT = 320
 // plugin's shared `add.spine` factory isn't safe to install/tear down across
 // React StrictMode's dev-only mount->cleanup->mount cycle.
 let sharedStartGame: Phaser.Game | null = null
+let adMuted = false
+export function setStartAdMuted(muted: boolean) {
+  adMuted = muted
+  if (sharedStartGame) sharedStartGame.sound.mute = muted || !getMusicEnabled()
+}
 
 // The start screen's sound manager only ever plays the one looped music
 // track, so a blanket mute on the whole manager is safe here (unlike the
 // main game's manager, which also plays one-shot SFX).
 export function setStartMusicMuted(muted: boolean) {
   if (sharedStartGame) {
-    sharedStartGame.sound.mute = muted
+    sharedStartGame.sound.mute = adMuted || muted
   }
 }
 
@@ -71,6 +77,7 @@ export function StartScreenPanda() {
     }
 
     sharedStartGame = new Phaser.Game(config)
+    if (adMuted) sharedStartGame.sound.mute = true
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

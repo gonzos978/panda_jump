@@ -4,19 +4,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
   width: 100%;
-  height: 100%;
-  padding: 16px;
+  height: 100vh;
+  height: 100dvh;
+  padding: 0;
+  background: #102a30;
 }
 
 .game-frame {
   position: relative;
-  width: min(480px, 100%);
+  flex: none;
+  width: min(100vw, 60vh);
+  width: min(100vw, 60dvh);
   aspect-ratio: 480 / 800;
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  touch-action: none;
 }
 
 #game-container {
@@ -26,8 +29,6 @@
 }
 
 #game-container canvas {
-  width: 100% !important;
-  height: 100% !important;
   display: block;
 }
 
@@ -1000,3 +1001,63 @@
 .tutorial-start-btn:active {
   transform: scale(0.97);
 }
+
+.ad-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #102a30;
+  color: white;
+  font-size: 20px;
+}
+.save-notice {
+  position: absolute;
+  left: 10%;
+  bottom: 90px;
+  width: 80%;
+  z-index: 45;
+  padding: 8px;
+  background: #0f3d2e;
+  color: white;
+  text-align: center;
+  pointer-events: none;
+}
+.poki-build .game-frame {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  background: #aee4ff;
+}
+.poki-build .start-content {
+  width: min(100%, 60dvh);
+  padding: min(5vw, 3dvh) min(8vw, 4.8dvh);
+}
+.poki-build .hud {
+  width: min(100%, 60dvh);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  padding-top: max(14px, env(safe-area-inset-top));
+}
+.poki-build .coins-pill { width: min(26%, 15.6dvh); }
+.poki-build .loading-logo { width: min(58%, 35dvh); }
+.poki-build .loading-bar-track { width: min(60%, 36dvh); }
+.poki-build .shop-panel,
+.poki-build .settings-panel,
+.poki-build .achievements-panel,
+.poki-build .leaderboard-panel,
+.poki-build .tutorial-panel,
+.poki-build .nickname-panel { width: min(78%, 47dvh); max-height: 90%; }
+.poki-build .pause-panel { width: min(66%, 40dvh); }
+.poki-build .run-over-wrap { width: min(82%, 49dvh); }
+.poki-build .hud-pause-btn { right: max(18px, calc((100% - 60dvh) / 2 + 18px)); bottom: max(18px, env(safe-area-inset-bottom)); }
+.poki-build .hud-mute-btn { left: max(18px, calc((100% - 60dvh) / 2 + 18px)); bottom: max(18px, env(safe-area-inset-bottom)); }
+.poki-build .save-notice { left: 50%; transform: translateX(-50%); width: min(80%, 48dvh); }
+
+.poki-build .coins-pill { padding-right: min(10vw, 6dvh); top: max(0.5%, env(safe-area-inset-top)); }
+
+.poki-build .hud { width: var(--play-width, min(100%, 60dvh)); }
+.poki-build .hud-pause-btn { right: max(18px, calc((100% - var(--play-width, 60dvh)) / 2 + 18px)); }
+.poki-build .hud-mute-btn { left: max(18px, calc((100% - var(--play-width, 60dvh)) / 2 + 18px)); }

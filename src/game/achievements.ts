@@ -16,11 +16,11 @@ export interface Achievement {
 }
 
 const powerupIcon: Record<PowerupKind, string> = {
-  rocket: '/assets/upgrades/rocket.png',
-  shield: '/assets/upgrades/shield.png',
-  magnet: '/assets/upgrades/magnet.png',
-  wings: '/assets/upgrades/wings.png',
-  parachute: '/assets/upgrades/parachute.png',
+  rocket: `${import.meta.env.BASE_URL}assets/upgrades/rocket.png`,
+  shield: `${import.meta.env.BASE_URL}assets/upgrades/shield.png`,
+  magnet: `${import.meta.env.BASE_URL}assets/upgrades/magnet.png`,
+  wings: `${import.meta.env.BASE_URL}assets/upgrades/wings.png`,
+  parachute: `${import.meta.env.BASE_URL}assets/upgrades/parachute.png`,
 }
 
 const powerupTitle: Record<PowerupKind, string> = {
@@ -75,14 +75,14 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'coins-25',
     title: 'Coin Collector',
     description: 'Collect 25 coins in total',
-    icon: '/assets/upgrades/coin.png',
+    icon: `${import.meta.env.BASE_URL}assets/upgrades/coin.png`,
     isUnlocked: () => getTotalCoinsCollected() >= 25,
   },
   {
     id: 'coins-100',
     title: 'Coin Hoarder',
     description: 'Collect 100 coins in total',
-    icon: '/assets/upgrades/coin.png',
+    icon: `${import.meta.env.BASE_URL}assets/upgrades/coin.png`,
     isUnlocked: () => getTotalCoinsCollected() >= 100,
   },
   powerupAchievement('rocket'),

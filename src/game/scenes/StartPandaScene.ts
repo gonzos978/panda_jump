@@ -11,9 +11,9 @@ export class StartPandaScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spineAtlas('panda-atlas', '/assets/hero/panda-idle-1080p.atlas')
-    this.load.spineSkeleton('panda-data', '/assets/hero/panda-idle.json')
-    this.load.audio('music-start', '/assets/sfx/main_screen_music.mp3')
+    this.load.spineAtlas('panda-atlas', `${import.meta.env.BASE_URL}assets/hero/panda-idle-1080p.atlas`)
+    this.load.spineSkeleton('panda-data', `${import.meta.env.BASE_URL}assets/hero/panda-idle.json`)
+    this.load.audio('music-start', `${import.meta.env.BASE_URL}assets/sfx/main_screen_music.mp3`)
   }
 
   create() {

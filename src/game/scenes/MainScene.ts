@@ -1,3 +1,5 @@
+import { IS_POKI } from '../platform'
+import { poki } from '../poki'
 import { SkinsAndAnimationBoundsProvider, type SpineGameObject } from '@esotericsoftware/spine-phaser-v4'
 import Phaser from 'phaser'
 import { getEquippedJumpEffect } from '../jumpEffects'
@@ -257,6 +259,22 @@ const BCG_LAYERS: BgLayerMeta[] = [
 ]
 
 export class MainScene extends Phaser.Scene {
+  private worldHeight = GAME_HEIGHT
+  private get viewportHeight() { return this.worldHeight }
+
+  private fitViewport() {
+    if (!IS_POKI) return
+    const zoom = Math.min(this.scale.width / GAME_WIDTH, this.scale.height / this.worldHeight)
+    this.cameras.main.setOrigin(0, 0).setZoom(zoom)
+    this.cameras.main.scrollX = (GAME_WIDTH - this.scale.width / zoom) / 2
+    document.documentElement.style.setProperty('--play-width', (GAME_WIDTH * zoom) + 'px')
+    const backdropScale = Math.max(this.scale.width / zoom / 941, this.worldHeight / 1672) * 3
+    for (const layer of this.bgLayers) if (layer.active) layer.setScale(backdropScale)
+    if (this.startPrompt?.active) {
+      this.startPrompt.setPosition(this.scale.width / zoom / 2, this.scale.height / zoom / 2).setScale(1 / zoom)
+    }
+  }
+
   private player!: PlayerSprite
   private platforms!: Phaser.Physics.Arcade.Group
   private solidPlatforms!: Phaser.Physics.Arcade.StaticGroup
@@ -292,6 +310,8 @@ export class MainScene extends Phaser.Scene {
   private chaserGraphics?: Phaser.GameObjects.Graphics
   private jumpEffect?: Phaser.GameObjects.Particles.ParticleEmitter
   private chaserMist?: Phaser.GameObjects.Particles.ParticleEmitter
+  private waitingForStart = true
+  private startPrompt?: Phaser.GameObjects.Text
   private gameOver = false
 
   private combo = 0
@@ -317,49 +337,49 @@ export class MainScene extends Phaser.Scene {
 
   preload() {
     for (const layer of BCG_LAYERS) {
-      this.load.image(layer.key, `/assets/bcg_layers/${layer.file}`)
+      this.load.image(layer.key, `${import.meta.env.BASE_URL}assets/bcg_layers/${layer.file}`)
     }
-    this.load.image('level-left', '/assets/level/level1left.png')
-    this.load.image('level-right', '/assets/level/level1Right.png')
-    this.load.image('land-normal-1', '/assets/level/land1.png')
-    this.load.image('land-normal-2', '/assets/level/land2.png')
-    this.load.image('land-normal-3', '/assets/level/land5.png')
-    this.load.image('land-moving', '/assets/level/land4.png')
-    this.load.image('land-hazard', '/assets/level/spikes.png')
+    this.load.image('level-left', `${import.meta.env.BASE_URL}assets/level/level1left.png`)
+    this.load.image('level-right', `${import.meta.env.BASE_URL}assets/level/level1Right.png`)
+    this.load.image('land-normal-1', `${import.meta.env.BASE_URL}assets/level/land1.png`)
+    this.load.image('land-normal-2', `${import.meta.env.BASE_URL}assets/level/land2.png`)
+    this.load.image('land-normal-3', `${import.meta.env.BASE_URL}assets/level/land5.png`)
+    this.load.image('land-moving', `${import.meta.env.BASE_URL}assets/level/land4.png`)
+    this.load.image('land-hazard', `${import.meta.env.BASE_URL}assets/level/spikes.png`)
     this.load.atlas(
       'land-spring-anim',
-      '/assets/level/land-spring-spritesheet.png',
-      '/assets/level/land-spring-spritesheet.json',
+      `${import.meta.env.BASE_URL}assets/level/land-spring-spritesheet.png`,
+      `${import.meta.env.BASE_URL}assets/level/land-spring-spritesheet.json`,
     )
     this.load.atlas(
       'land-crumble-anim',
-      '/assets/level/wood-destroy-spritesheet-v2.png',
-      '/assets/level/wood-destroy-spritesheet-v2.json',
+      `${import.meta.env.BASE_URL}assets/level/wood-destroy-spritesheet-v2.png`,
+      `${import.meta.env.BASE_URL}assets/level/wood-destroy-spritesheet-v2.json`,
     )
     this.load.atlas(
       'pickup-star-anim',
-      '/assets/upgrades/coin-rotation-spritesheet.png',
-      '/assets/upgrades/coin-rotation-spritesheet.json',
+      `${import.meta.env.BASE_URL}assets/upgrades/coin-rotation-spritesheet.png`,
+      `${import.meta.env.BASE_URL}assets/upgrades/coin-rotation-spritesheet.json`,
     )
-    this.load.image('pickup-rocket', '/assets/upgrades/rocket.png')
-    this.load.image('pickup-shield', '/assets/upgrades/shield.png')
-    this.load.image('pickup-magnet', '/assets/upgrades/magnet.png')
+    this.load.image('pickup-rocket', `${import.meta.env.BASE_URL}assets/upgrades/rocket.png`)
+    this.load.image('pickup-shield', `${import.meta.env.BASE_URL}assets/upgrades/shield.png`)
+    this.load.image('pickup-magnet', `${import.meta.env.BASE_URL}assets/upgrades/magnet.png`)
     this.load.atlas(
       'pickup-wings-anim',
-      '/assets/upgrades/wings-flap-spritesheet.png',
-      '/assets/upgrades/wings-flap-spritesheet.json',
+      `${import.meta.env.BASE_URL}assets/upgrades/wings-flap-spritesheet.png`,
+      `${import.meta.env.BASE_URL}assets/upgrades/wings-flap-spritesheet.json`,
     )
-    this.load.image('pickup-parachute', '/assets/upgrades/parachute.png')
-    this.load.spineAtlas('panda-atlas', '/assets/hero/panda-idle-1080p.atlas')
-    this.load.spineSkeleton('panda-data', '/assets/hero/panda-idle.json')
-    this.load.spineAtlas('bat-atlas', '/assets/enemies/bat-1080p.atlas')
-    this.load.spineSkeleton('bat-data', '/assets/enemies/bat.json')
-    this.load.audio('sfx-spring', '/assets/sfx/spring_hit.mp3')
-    this.load.audio('sfx-jump', '/assets/sfx/jump.mp3')
-    this.load.audio('sfx-coin', '/assets/sfx/coin_collect.mp3')
-    this.load.audio('sfx-powerup', '/assets/sfx/power_up.mp3')
-    this.load.audio('sfx-fall', '/assets/sfx/fall_down.mp3')
-    this.load.audio('music-game', '/assets/sfx/game_music.mp3')
+    this.load.image('pickup-parachute', `${import.meta.env.BASE_URL}assets/upgrades/parachute.png`)
+    this.load.spineAtlas('panda-atlas', `${import.meta.env.BASE_URL}assets/hero/panda-idle-1080p.atlas`)
+    this.load.spineSkeleton('panda-data', `${import.meta.env.BASE_URL}assets/hero/panda-idle.json`)
+    this.load.spineAtlas('bat-atlas', `${import.meta.env.BASE_URL}assets/enemies/bat-1080p.atlas`)
+    this.load.spineSkeleton('bat-data', `${import.meta.env.BASE_URL}assets/enemies/bat.json`)
+    this.load.audio('sfx-spring', `${import.meta.env.BASE_URL}assets/sfx/spring_hit.mp3`)
+    this.load.audio('sfx-jump', `${import.meta.env.BASE_URL}assets/sfx/jump.mp3`)
+    this.load.audio('sfx-coin', `${import.meta.env.BASE_URL}assets/sfx/coin_collect.mp3`)
+    this.load.audio('sfx-powerup', `${import.meta.env.BASE_URL}assets/sfx/power_up.mp3`)
+    this.load.audio('sfx-fall', `${import.meta.env.BASE_URL}assets/sfx/fall_down.mp3`)
+    this.load.audio('music-game', `${import.meta.env.BASE_URL}assets/sfx/game_music.mp3`)
   }
 
   private playSfx(key: string, config?: Phaser.Types.Sound.SoundConfig) {
@@ -369,6 +389,11 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
+    this.worldHeight = IS_POKI ? Math.max(GAME_HEIGHT, GAME_WIDTH * this.scale.height / this.scale.width) : GAME_HEIGHT
+    this.fitViewport()
+    this.scale.on('resize', this.fitViewport, this)
+    this.events.once('shutdown', () => this.scale.off('resize', this.fitViewport, this))
+    this.waitingForStart = true
     this.gameOver = false
     this.bonusScore = 0
     this.coinsThisRun = 0
@@ -381,6 +406,7 @@ export class MainScene extends Phaser.Scene {
     this.platformList = []
     this.birdList = []
     this.bgTiles = []
+    this.waterfallDebugMode = false
     this.nextBgIndex = 0
     this.highestBgY = 0
     this.shieldCharges = 0
@@ -400,11 +426,13 @@ export class MainScene extends Phaser.Scene {
     this.musicTrack.mute = !getMusicEnabled()
     this.musicTrack.play()
 
-    // extended well below GAME_HEIGHT too (not just above it), so a missed
+    // extended well below this.viewportHeight too (not just above it), so a missed
     // first jump falls far enough to trip the "fell off camera" game-over
     // check in update() instead of coming to rest on this physical bound
+    this.physics.resume()
     this.physics.world.setBounds(0, -1_000_000, GAME_WIDTH, 2_000_000)
-    this.cameras.main.setBounds(0, -1_000_000, GAME_WIDTH, 2_000_000)
+    this.cameras.main.setBounds(IS_POKI ? -1_000_000 : 0, -1_000_000, IS_POKI ? 2_000_000 : GAME_WIDTH, 2_000_000)
+    this.fitViewport()
 
     this.createTextures()
     this.createAnimations()
@@ -416,7 +444,7 @@ export class MainScene extends Phaser.Scene {
     this.hazards = this.physics.add.group({ allowGravity: false })
     this.pickups = this.physics.add.group({ allowGravity: false })
 
-    this.startY = GAME_HEIGHT - 60
+    this.startY = this.viewportHeight - 60
     this.spawnPlatform(GAME_WIDTH / 2, this.startY, PLATFORM_START_WIDTH, 'normal')
     this.highestPlatformY = this.startY
     this.highestPlatformX = GAME_WIDTH / 2
@@ -453,7 +481,20 @@ export class MainScene extends Phaser.Scene {
     body.checkCollision.up = false
     body.checkCollision.down = true
     body.setGravityY(GRAVITY_Y)
+    body.setAllowGravity(false)
     this.player.animationState.setAnimation(0, 'jump', true)
+    this.player.animationState.timeScale = 0
+    this.startPrompt = this.add.text(GAME_WIDTH / 2, this.viewportHeight / 2, 'Tap or click to start', {
+      fontFamily: 'Segoe UI, Arial, sans-serif',
+      fontSize: '24px',
+      fontStyle: 'bold',
+      color: '#ffffff',
+      stroke: '#0f3d2e',
+      strokeThickness: 5,
+      backgroundColor: '#0f3d2ecc',
+      padding: { x: 18, y: 12 },
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(20)
+    this.fitViewport()
 
     this.physics.add.collider(this.player, this.solidPlatforms, this.handleLanding, this.canLand, this)
     this.physics.add.collider(this.player, this.platforms, this.handleLanding, this.canLand, this)
@@ -475,6 +516,16 @@ export class MainScene extends Phaser.Scene {
     // for devices with no keyboard
     this.pointerTargetX = null
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (this.waterfallDebugMode || this.gameOver) return
+      if (this.waitingForStart) {
+        this.waitingForStart = false
+        poki.start()
+        this.startPrompt?.destroy()
+        this.startPrompt = undefined
+        this.player.animationState.timeScale = 1
+        this.player.animationState.setAnimation(0, 'jump', true)
+        this.player.body.setAllowGravity(true)
+      }
       this.pointerTargetX = pointer.worldX
     })
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
@@ -495,91 +546,93 @@ export class MainScene extends Phaser.Scene {
     // Dev-only tool for picking waterfall particle spots by eye - visit
     // ?debugWaterfall=1 to freeze the run and click the backdrop to drop
     // markers; each click also logs the coordinate to the console.
-    if (new URLSearchParams(window.location.search).has('debugWaterfall')) {
+    if (import.meta.env.DEV && new URLSearchParams(window.location.search).has('debugWaterfall')) {
       this.setupWaterfallDebugMode()
     }
   }
 
   private setupWaterfallDebugMode() {
-    this.physics.pause()
-    this.waterfallDebugMode = true
+    if (import.meta.env.DEV) {
+      this.physics.pause()
+      this.waterfallDebugMode = true
 
-    // marks track the mist layer's own parallax (0.4) so a dropped marker
-    // stays pinned to the same painted spot as the background is panned,
-    // matching how the real particle emitters will behave once placed there
-    const MARK_PARALLAX = 0.4
-    const marks: { worldX: number; worldY: number }[] = []
-    const markerGraphics = this.add.graphics().setScrollFactor(0, MARK_PARALLAX).setDepth(1000)
+      // marks track the mist layer's own parallax (0.4) so a dropped marker
+      // stays pinned to the same painted spot as the background is panned,
+      // matching how the real particle emitters will behave once placed there
+      const MARK_PARALLAX = 0.4
+      const marks: { worldX: number; worldY: number }[] = []
+      const markerGraphics = this.add.graphics().setScrollFactor(0, MARK_PARALLAX).setDepth(1000)
 
-    const hint = this.add
-      .text(8, 8, 'Waterfall debug: click to mark, drag to pan, Up/Down to nudge, C to clear (see console)', {
-        fontSize: '11px',
-        color: '#ffffff',
-        backgroundColor: '#000000cc',
-        padding: { x: 4, y: 4 },
-      })
-      .setScrollFactor(0)
-      .setDepth(1000)
-    hint.setWordWrapWidth(GAME_WIDTH - 16)
+      const hint = this.add
+        .text(8, 8, 'Waterfall debug: click to mark, drag to pan, Up/Down to nudge, C to clear (see console)', {
+          fontSize: '11px',
+          color: '#ffffff',
+          backgroundColor: '#000000cc',
+          padding: { x: 4, y: 4 },
+        })
+        .setScrollFactor(0)
+        .setDepth(1000)
+      hint.setWordWrapWidth(GAME_WIDTH - 16)
 
-    const listText = this.add
-      .text(8, hint.height + 14, '', {
-        fontSize: '11px',
-        color: '#ffff66',
-        backgroundColor: '#000000cc',
-        padding: { x: 4, y: 4 },
-      })
-      .setScrollFactor(0)
-      .setDepth(1000)
+      const listText = this.add
+        .text(8, hint.height + 14, '', {
+          fontSize: '11px',
+          color: '#ffff66',
+          backgroundColor: '#000000cc',
+          padding: { x: 4, y: 4 },
+        })
+        .setScrollFactor(0)
+        .setDepth(1000)
 
-    const redraw = () => {
-      markerGraphics.clear()
-      marks.forEach((m) => {
-        markerGraphics.lineStyle(2, 0xff3d3d, 1)
-        markerGraphics.strokeCircle(m.worldX, m.worldY, 9)
-        markerGraphics.fillStyle(0xff3d3d, 1)
-        markerGraphics.fillCircle(m.worldX, m.worldY, 2)
-      })
-      listText.setText(marks.map((m, i) => `${i + 1}: { x: ${m.worldX}, y: ${m.worldY} }`).join('\n'))
-    }
-
-    let dragStartScreenY: number | null = null
-    let dragStartScrollY = 0
-    let dragged = false
-    const DRAG_THRESHOLD = 6
-
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      dragStartScreenY = pointer.y
-      dragStartScrollY = this.cameras.main.scrollY
-      dragged = false
-    })
-
-    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-      if (dragStartScreenY === null || !pointer.isDown) return
-      const dy = pointer.y - dragStartScreenY
-      if (Math.abs(dy) > DRAG_THRESHOLD) {
-        dragged = true
-        this.cameras.main.scrollY = dragStartScrollY - dy
+      const redraw = () => {
+        markerGraphics.clear()
+        marks.forEach((m) => {
+          markerGraphics.lineStyle(2, 0xff3d3d, 1)
+          markerGraphics.strokeCircle(m.worldX, m.worldY, 9)
+          markerGraphics.fillStyle(0xff3d3d, 1)
+          markerGraphics.fillCircle(m.worldX, m.worldY, 2)
+        })
+        listText.setText(marks.map((m, i) => `${i + 1}: { x: ${m.worldX}, y: ${m.worldY} }`).join('\n'))
       }
-    })
 
-    this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-      if (!dragged && dragStartScreenY !== null) {
-        const worldX = Math.round(pointer.x)
-        const worldY = Math.round(pointer.y + this.cameras.main.scrollY * MARK_PARALLAX)
-        marks.push({ worldX, worldY })
-        console.log('Waterfall spot:', JSON.stringify({ x: worldX, y: worldY }))
+      let dragStartScreenY: number | null = null
+      let dragStartScrollY = 0
+      let dragged = false
+      const DRAG_THRESHOLD = 6
+
+      this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        dragStartScreenY = pointer.y
+        dragStartScrollY = this.cameras.main.scrollY
+        dragged = false
+      })
+
+      this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+        if (dragStartScreenY === null || !pointer.isDown) return
+        const dy = pointer.y - dragStartScreenY
+        if (Math.abs(dy) > DRAG_THRESHOLD) {
+          dragged = true
+          this.cameras.main.scrollY = dragStartScrollY - dy
+        }
+      })
+
+      this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+        if (!dragged && dragStartScreenY !== null) {
+          const worldX = Math.round(pointer.x)
+          const worldY = Math.round(pointer.y + this.cameras.main.scrollY * MARK_PARALLAX)
+          marks.push({ worldX, worldY })
+          console.log('Waterfall spot:', JSON.stringify({ x: worldX, y: worldY }))
+          redraw()
+        }
+        dragStartScreenY = null
+        dragged = false
+      })
+
+      this.input.keyboard?.on('keydown-C', () => {
+        marks.length = 0
+        console.log('Waterfall spots cleared')
         redraw()
-      }
-      dragStartScreenY = null
-      dragged = false
-    })
-
-    this.input.keyboard?.on('keydown-C', () => {
-      marks.length = 0
-      console.log('Waterfall spots cleared')
-      redraw()
-    })
+      })
+    }
   }
 
   private createTextures() {
@@ -770,15 +823,15 @@ export class MainScene extends Phaser.Scene {
     // own fraction of the camera's movement (scrollFactor), so distant sky
     // barely moves while nearer cliffs drift past faster, reading as real
     // depth instead of one flat painted image. Scaled well past a single
-    // screen's worth of coverage (not just GAME_HEIGHT) so the faster layers
+    // screen's worth of coverage (not just this.viewportHeight) so the faster layers
     // have room to slide before their edges would show; climbing high enough
     // still eventually scrolls the nearer layers away, which reads fine as
     // "climbing above the clouds" rather than a broken layer.
-    const bgScale = Math.max(GAME_WIDTH / 941, GAME_HEIGHT / 1672) * 3
+    const bgScale = Math.max(GAME_WIDTH / 941, this.viewportHeight / 1672, IS_POKI ? this.scale.width / this.cameras.main.zoom / 941 : 0) * 3
     this.bgLayers = BCG_LAYERS.map((layer, index) => {
-      const sprite = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, layer.key)
+      const sprite = this.add.image(GAME_WIDTH / 2, this.viewportHeight / 2, layer.key)
       sprite.setScale(bgScale)
-      sprite.setScrollFactor(0, layer.parallax)
+      sprite.setScrollFactor(IS_POKI ? 1 : 0, layer.parallax)
       sprite.setDepth(-20 + index)
       return sprite
     })
@@ -792,7 +845,8 @@ export class MainScene extends Phaser.Scene {
     this.bgTileScale = GAME_WIDTH / 941
     this.bgTileHeight = 1672 * this.bgTileScale
 
-    const seedCount = Math.ceil((GAME_HEIGHT * 2) / this.bgTileHeight) + 1
+    for (let below = 1; below * this.bgTileHeight < this.viewportHeight; below++) this.spawnBackgroundTile(-below)
+    const seedCount = Math.ceil((this.viewportHeight * 2) / this.bgTileHeight) + 1
     for (let i = 0; i < seedCount; i++) {
       this.spawnBackgroundTile(this.nextBgIndex)
       this.nextBgIndex++
@@ -801,7 +855,7 @@ export class MainScene extends Phaser.Scene {
 
   private spawnBackgroundTile(index: number) {
     const topY = -index * this.bgTileHeight
-    const flip = index % 2 === 1
+    const flip = Math.abs(index) % 2 === 1
 
     const left = this.add.image(GAME_WIDTH / 2, topY, 'level-left').setOrigin(0.5, 0)
     const right = this.add.image(GAME_WIDTH / 2, topY, 'level-right').setOrigin(0.5, 0)
@@ -882,7 +936,7 @@ export class MainScene extends Phaser.Scene {
 
     // Keep every row the recovery camera can show, plus padding for art
     // extending beyond a platform's center.
-    const cullBelow = peakScrollY + GAME_HEIGHT + PLATFORM_RECOVERY + FLOOR_HEIGHT
+    const cullBelow = peakScrollY + this.viewportHeight + PLATFORM_RECOVERY + FLOOR_HEIGHT
     this.platformList = this.platformList.filter((data) => {
       if (!data.crumbling && data.body.y > cullBelow) {
         data.body.destroy()
@@ -1041,7 +1095,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   private handleLanding(_playerObj: unknown, platformObj: unknown) {
-    if (this.gameOver) return
+    if (this.gameOver || this.waitingForStart) return
     const platform = platformObj as Phaser.Physics.Arcade.Sprite
     const data = platform.getData('platformData') as PlatformData
 
@@ -1336,7 +1390,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number) {
-    if (this.gameOver) return
+    if (this.gameOver || (this.waitingForStart && !this.waterfallDebugMode)) return
 
     const pointerLeft = this.pointerTargetX !== null && this.pointerTargetX < this.player.x - POINTER_DEADZONE
     const pointerRight = this.pointerTargetX !== null && this.pointerTargetX > this.player.x + POINTER_DEADZONE
@@ -1404,7 +1458,7 @@ export class MainScene extends Phaser.Scene {
 
     const camera = this.cameras.main
     if (!this.waterfallDebugMode) {
-      const targetScrollY = this.player.y - GAME_HEIGHT * 0.6
+      const targetScrollY = this.player.y - this.viewportHeight * 0.6
       this.minCameraScrollY = Math.min(this.minCameraScrollY, targetScrollY)
       camera.scrollY = Math.min(0, targetScrollY, this.minCameraScrollY + PLATFORM_RECOVERY)
     }
@@ -1416,7 +1470,7 @@ export class MainScene extends Phaser.Scene {
       this.nextBgIndex++
     }
 
-    const bgCullBelow = this.cameras.main.scrollY + GAME_HEIGHT + this.bgTileHeight
+    const bgCullBelow = this.cameras.main.scrollY + this.viewportHeight + this.bgTileHeight
     this.bgTiles = this.bgTiles.filter((tile) => {
       if (tile.topY > bgCullBelow) {
         tile.left.destroy()
@@ -1479,7 +1533,7 @@ export class MainScene extends Phaser.Scene {
     // otherwise the camera never tracks the fall and the player can come to
     // rest on the world bounds instead of triggering game over
     if (!this.waterfallDebugMode) {
-      if (this.player.y > this.minCameraScrollY + GAME_HEIGHT + 60) {
+      if (this.player.y > this.minCameraScrollY + this.viewportHeight + 60) {
         this.triggerGameOver()
       }
 
@@ -1505,6 +1559,7 @@ export class MainScene extends Phaser.Scene {
   private triggerGameOver() {
     if (this.gameOver) return
     this.gameOver = true
+    poki.stop()
     this.physics.pause()
     this.musicTrack?.stop()
     this.playSfx('sfx-fall', { volume: 0.6 })
@@ -1521,6 +1576,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   restartGame() {
+    poki.stop()
     this.scene.restart()
   }
 
@@ -1530,11 +1586,13 @@ export class MainScene extends Phaser.Scene {
 
   pauseGame() {
     if (this.gameOver) return
+    poki.stop()
     this.scene.pause()
     this.musicTrack?.pause()
   }
 
   resumeGame() {
+    if (!this.waitingForStart && !this.gameOver) poki.start()
     this.scene.resume()
     if (this.musicTrack?.isPaused) this.musicTrack.resume()
   }

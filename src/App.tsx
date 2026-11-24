@@ -1,9 +1,12 @@
+import { IS_POKI } from './game/platform'
+import { poki } from './game/poki'
+import { safeStorage } from './game/safeStorage'
 import { useEffect, useRef, useState } from 'react'
 import type Phaser from 'phaser'
 import './App.css'
 import { PandaCollection } from './PandaCollection'
 import { PhaserGame } from './game/PhaserGame'
-import { pauseStartMusic, resumeStartMusic, setStartMusicMuted, StartScreenPanda } from './game/StartScreenPanda'
+import { pauseStartMusic, resumeStartMusic, setStartMusicMuted, setStartAdMuted, StartScreenPanda } from './game/StartScreenPanda'
 import { ACHIEVEMENTS } from './game/achievements'
 import { EventBus, type ComboPayload, type GameOverPayload, type PowerupPayload } from './game/EventBus'
 import { fetchTopScores, submitScore, type GlobalLeaderboardEntry } from './game/leaderboard'
@@ -26,9 +29,12 @@ import { UPGRADES } from './game/upgrades'
 
 type Screen = 'loading' | 'start' | 'game'
 
-const ASSETS = '/assets'
+const ASSETS = import.meta.env.BASE_URL + 'assets'
 
 function App() {
+  const [adBusy, setAdBusy] = useState(false)
+  const adBusyRef = useRef(false)
+  const [persistentSave] = useState(() => safeStorage.isPersistent())
   const gameRef = useRef<Phaser.Game | null>(null)
   const [screen, setScreen] = useState<Screen>('loading')
   const [loadProgress, setLoadProgress] = useState(0)
@@ -94,7 +100,10 @@ function App() {
   // own Phaser preload scene briefly flashes its loading bar right after,
   // on top of what's supposed to be the fully-ready start screen.
   useEffect(() => {
-    if (assetsWarmed && startPandaReady) setScreen('start')
+    if (assetsWarmed && startPandaReady) {
+      poki.loadingFinished()
+      setScreen('start')
+    }
   }, [assetsWarmed, startPandaReady])
 
   useEffect(() => {
@@ -105,6 +114,7 @@ function App() {
       setBest(payload.best)
       setTotalCoins(getCoins())
 
+      if (IS_POKI) return
       const name = getPlayerName()
       if (name) {
         submitScore(name, payload.score).catch((err) => console.error('Failed to submit score', err))
@@ -134,7 +144,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!showLeaderboard) return
+    if (IS_POKI || !showLeaderboard) return
     setLeaderboardStatus('loading')
     fetchTopScores(10)
       .then((entries) => {
@@ -182,7 +192,7 @@ function App() {
   }
 
   const handlePlay = () => {
-    if (!getTutorialSeen()) {
+    if (!IS_POKI && !getTutorialSeen()) {
       setTutorialGatesPlay(true)
       setShowTutorial(true)
       return
@@ -205,7 +215,9 @@ function App() {
     }
   }
 
-  const handleRestart = () => {
+  const handleRestart = async () => {
+    if (adBusyRef.current) return
+    await runAdBreak()
     resetGameState()
     const scene = gameRef.current?.scene.getScene('MainScene') as MainScene | undefined
     scene?.restartGame()
@@ -213,7 +225,8 @@ function App() {
 
   const handleMainMenu = () => {
     const scene = gameRef.current?.scene.getScene('MainScene') as MainScene | undefined
-    scene?.resumeGame()
+    poki.stop()
+    scene?.pauseGame()
     resetGameState()
     setTotalCoins(getCoins())
     resumeStartMusic()
@@ -226,11 +239,51 @@ function App() {
     setShowPause(true)
   }
 
-  const handleResume = () => {
+  const handleResume = async () => {
+    if (adBusyRef.current) return
+    await runAdBreak()
     const scene = gameRef.current?.scene.getScene('MainScene') as MainScene | undefined
     scene?.resumeGame()
     setShowPause(false)
   }
+
+  async function runAdBreak() {
+    if (!IS_POKI || adBusyRef.current) return
+    adBusyRef.current = true
+    setAdBusy(true)
+    const game = gameRef.current
+    const previousMute = game?.sound.mute ?? false
+    if (game) { game.sound.mute = true; game.input.enabled = false }
+    setStartAdMuted(true)
+    try {
+      await poki.commercialBreak(() => undefined)
+    } finally {
+      if (game) { game.sound.mute = previousMute; game.input.enabled = true }
+      setStartAdMuted(false)
+      adBusyRef.current = false
+      setAdBusy(false)
+    }
+  }
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.repeat || event.target instanceof HTMLInputElement || adBusyRef.current) return
+      if (event.code !== 'Escape' && event.code !== 'Space') return
+      if (screen !== 'game' || result || pendingScore !== null) return
+      event.preventDefault()
+      if (showPause) void handleResume()
+      else handlePause()
+    }
+    const onHidden = () => {
+      if (document.hidden && screen === 'game' && !result && !showPause && !adBusyRef.current) handlePause()
+    }
+    window.addEventListener('keydown', onKey)
+    document.addEventListener('visibilitychange', onHidden)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.removeEventListener('visibilitychange', onHidden)
+    }
+  })
 
   const handleBuyUpgrade = (upgradeId: string) => {
     const upgrade = UPGRADES.find((u) => u.id === upgradeId)
@@ -271,7 +324,8 @@ function App() {
 
   return (
     <div className="app-shell">
-      <div className="game-frame">
+      <div className="game-frame" inert={adBusy}>
+        {!persistentSave && <p className="save-notice" role="status">Progress is saved for this session only.</p>}
         {screen === 'loading' && (
           <div className="loading-screen">
             <img className="loading-logo" src={`${ASSETS}/start_screen/game_logo.png`} alt="PandaJump" />
@@ -312,6 +366,7 @@ function App() {
                   onClick={() => setShowCollection(true)}
                   aria-label="Panda Collection"
                 />
+                {!IS_POKI && (
                 <button
                   type="button"
                   className="icon-btn"
@@ -319,6 +374,7 @@ function App() {
                   onClick={() => setShowLeaderboard(true)}
                   aria-label="Leaderboard"
                 />
+                )}
                 <button
                   type="button"
                   className="icon-btn"
@@ -526,7 +582,7 @@ function App() {
                   <div className="tutorial-list">
                     <div className="tutorial-item">
                       <span className="tutorial-icon">🖐️</span>
-                      <p>Hold and drag anywhere to steer left or right</p>
+                      <p>Hold and drag to steer. On keyboard, use ← → or A / D. Press Esc or Space to pause.</p>
                     </div>
                     <div className="tutorial-item">
                       <span className="tutorial-icon">🐾</span>
@@ -725,6 +781,7 @@ function App() {
           </>
         )}
       </div>
+      {adBusy && <div className="ad-overlay" role="status">Ad break…</div>}
     </div>
   )
 }
