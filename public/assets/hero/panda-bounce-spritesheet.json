@@ -1,0 +1,88 @@
+{
+  "frames": {
+    "panda_bounce_00": {
+      "frame": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_bounce_01": {
+      "frame": { "x": 444, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_bounce_02": {
+      "frame": { "x": 888, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_bounce_03": {
+      "frame": { "x": 1332, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_bounce_04": {
+      "frame": { "x": 0, "y": 444, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_bounce_05": {
+      "frame": { "x": 444, "y": 444, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_bounce_06": {
+      "frame": { "x": 888, "y": 444, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_bounce_07": {
+      "frame": { "x": 1332, "y": 444, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    }
+  },
+  "animations": {
+    "bounce": [
+      "panda_bounce_00",
+      "panda_bounce_01",
+      "panda_bounce_02",
+      "panda_bounce_03",
+      "panda_bounce_04",
+      "panda_bounce_05",
+      "panda_bounce_06",
+      "panda_bounce_07"
+    ]
+  },
+  "meta": {
+    "app": "ChatGPT",
+    "version": "1.0",
+    "image": "panda-bounce-spritesheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 1776, "h": 888 },
+    "scale": "1"
+  }
+}

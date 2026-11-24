@@ -1,0 +1,88 @@
+{
+  "frames": {
+    "panda_jump_00": {
+      "frame": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_jump_01": {
+      "frame": { "x": 444, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_jump_02": {
+      "frame": { "x": 888, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_jump_03": {
+      "frame": { "x": 1332, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_jump_04": {
+      "frame": { "x": 0, "y": 444, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_jump_05": {
+      "frame": { "x": 444, "y": 444, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_jump_06": {
+      "frame": { "x": 888, "y": 444, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "panda_jump_07": {
+      "frame": { "x": 1332, "y": 444, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    }
+  },
+  "animations": {
+    "jump": [
+      "panda_jump_00",
+      "panda_jump_01",
+      "panda_jump_02",
+      "panda_jump_03",
+      "panda_jump_04",
+      "panda_jump_05",
+      "panda_jump_06",
+      "panda_jump_07"
+    ]
+  },
+  "meta": {
+    "app": "ChatGPT",
+    "version": "1.0",
+    "image": "panda-jump-spritesheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 1776, "h": 888 },
+    "scale": "1"
+  }
+}

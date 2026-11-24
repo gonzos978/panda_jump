@@ -1,0 +1,80 @@
+{
+  "frames": {
+    "coin_00.png": {
+      "frame": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 }
+    },
+    "coin_01.png": {
+      "frame": { "x": 444, "y": 0, "w": 443, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 443, "h": 444 },
+      "sourceSize": { "w": 443, "h": 444 }
+    },
+    "coin_02.png": {
+      "frame": { "x": 887, "y": 0, "w": 444, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 444 },
+      "sourceSize": { "w": 444, "h": 444 }
+    },
+    "coin_03.png": {
+      "frame": { "x": 1331, "y": 0, "w": 443, "h": 444 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 443, "h": 444 },
+      "sourceSize": { "w": 443, "h": 444 }
+    },
+    "coin_04.png": {
+      "frame": { "x": 0, "y": 444, "w": 444, "h": 443 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 443 },
+      "sourceSize": { "w": 444, "h": 443 }
+    },
+    "coin_05.png": {
+      "frame": { "x": 444, "y": 444, "w": 443, "h": 443 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 443, "h": 443 },
+      "sourceSize": { "w": 443, "h": 443 }
+    },
+    "coin_06.png": {
+      "frame": { "x": 887, "y": 444, "w": 444, "h": 443 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 444, "h": 443 },
+      "sourceSize": { "w": 444, "h": 443 }
+    },
+    "coin_07.png": {
+      "frame": { "x": 1331, "y": 444, "w": 443, "h": 443 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 443, "h": 443 },
+      "sourceSize": { "w": 443, "h": 443 }
+    }
+  },
+  "animations": {
+    "rotate": [
+      "coin_00.png",
+      "coin_01.png",
+      "coin_02.png",
+      "coin_03.png",
+      "coin_04.png",
+      "coin_05.png",
+      "coin_06.png",
+      "coin_07.png"
+    ]
+  },
+  "meta": {
+    "app": "ChatGPT",
+    "version": "1.0",
+    "image": "coin-rotation-spritesheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 1774, "h": 887 },
+    "scale": "1"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "frames": {
+    "spring_01_idle.png": { "frame": { "x": 0, "y": 0, "w": 512, "h": 512 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 512, "h": 512 }, "sourceSize": { "w": 512, "h": 512 } },
+    "spring_02_compress.png": { "frame": { "x": 512, "y": 0, "w": 512, "h": 512 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 512, "h": 512 }, "sourceSize": { "w": 512, "h": 512 } },
+    "spring_03_compressed.png": { "frame": { "x": 1024, "y": 0, "w": 512, "h": 512 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 512, "h": 512 }, "sourceSize": { "w": 512, "h": 512 } },
+    "spring_04_release.png": { "frame": { "x": 0, "y": 512, "w": 512, "h": 512 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 512, "h": 512 }, "sourceSize": { "w": 512, "h": 512 } },
+    "spring_05_stretched.png": { "frame": { "x": 512, "y": 512, "w": 512, "h": 512 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 512, "h": 512 }, "sourceSize": { "w": 512, "h": 512 } },
+    "spring_06_settle.png": { "frame": { "x": 1024, "y": 512, "w": 512, "h": 512 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 512, "h": 512 }, "sourceSize": { "w": 512, "h": 512 } }
+  },
+  "animations": {
+    "spring": [
+      "spring_01_idle.png",
+      "spring_02_compress.png",
+      "spring_03_compressed.png",
+      "spring_04_release.png",
+      "spring_05_stretched.png",
+      "spring_06_settle.png"
+    ]
+  },
+  "meta": {
+    "app": "OpenAI Codex",
+    "version": "1.0",
+    "image": "land-spring-spritesheet.png",
+    "format": "RGBA8888",
+    "size": { "w": 1536, "h": 1024 },
+    "scale": "1"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "frames": {
+    "wood_destroy_01_intact.png": { "frame": { "x": 0, "y": 0, "w": 592, "h": 444 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 592, "h": 444 }, "sourceSize": { "w": 592, "h": 444 } },
+    "wood_destroy_02_cracked.png": { "frame": { "x": 592, "y": 0, "w": 592, "h": 444 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 592, "h": 444 }, "sourceSize": { "w": 592, "h": 444 } },
+    "wood_destroy_03_separated.png": { "frame": { "x": 1184, "y": 0, "w": 592, "h": 444 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 592, "h": 444 }, "sourceSize": { "w": 592, "h": 444 } },
+    "wood_destroy_04_breaking.png": { "frame": { "x": 0, "y": 444, "w": 592, "h": 444 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 592, "h": 444 }, "sourceSize": { "w": 592, "h": 444 } },
+    "wood_destroy_05_collapsed.png": { "frame": { "x": 592, "y": 444, "w": 592, "h": 444 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 592, "h": 444 }, "sourceSize": { "w": 592, "h": 444 } },
+    "wood_destroy_06_debris.png": { "frame": { "x": 1184, "y": 444, "w": 592, "h": 444 }, "rotated": false, "trimmed": false, "spriteSourceSize": { "x": 0, "y": 0, "w": 592, "h": 444 }, "sourceSize": { "w": 592, "h": 444 } }
+  },
+  "animations": {
+    "destroy": [
+      "wood_destroy_01_intact.png",
+      "wood_destroy_02_cracked.png",
+      "wood_destroy_03_separated.png",
+      "wood_destroy_04_breaking.png",
+      "wood_destroy_05_collapsed.png",
+      "wood_destroy_06_debris.png"
+    ]
+  },
+  "meta": {
+    "app": "OpenAI Codex",
+    "version": "2.0",
+    "image": "wood-destroy-spritesheet-v2.png",
+    "format": "RGBA8888",
+    "size": { "w": 1776, "h": 888 },
+    "scale": "1"
+  }
+}

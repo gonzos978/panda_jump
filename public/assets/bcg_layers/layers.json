@@ -1,0 +1,11 @@
+{
+  "canvas": { "width": 941, "height": 1672 },
+  "layers": [
+    { "id": "sky", "file": "00-sky-base.png", "zIndex": 0, "parallax": 0.0 },
+    { "id": "rearClouds", "file": "01-rear-clouds.png", "zIndex": 10, "parallax": 0.06, "driftX": 3 },
+    { "id": "distantIslands", "file": "02-distant-islands.png", "zIndex": 20, "parallax": 0.12 },
+    { "id": "centralMountains", "file": "03-central-mountains.png", "zIndex": 30, "parallax": 0.28 },
+    { "id": "foregroundCliffs", "file": "04-foreground-cliffs.png", "zIndex": 40, "parallax": 0.55 },
+    { "id": "waterfallsMist", "file": "05-waterfalls-mist.png", "zIndex": 50, "parallax": 0.4, "pulseAlpha": true }
+  ]
+}
